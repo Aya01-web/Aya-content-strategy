@@ -1,0 +1,22 @@
+{
+  "name": "aya-content-strategy",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/clean-sites-build.mjs && vite build && node scripts/prepare-sites-build.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "framer-motion": "^11.15.0",
+    "gsap": "^3.14.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^5.4.11"
+  }
+}
