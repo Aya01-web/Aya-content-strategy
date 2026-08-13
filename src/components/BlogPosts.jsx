@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { FaArrowLeft, FaArrowRight, FaArrowUpRightFromSquare } from 'react-icons/fa6';
 import { blogPostImages } from './BlogPostImages';
 import './BlogPosts.css';
@@ -56,12 +56,41 @@ const articles = [
 
 export default function BlogPosts() {
   const trackRef = useRef(null);
+  const sliderRef = useRef(null);
 
   const move = (direction) => {
     const track = trackRef.current;
     if (!track) return;
-    track.scrollBy({ left: direction * track.clientWidth * 0.82, behavior: 'smooth' });
+
+    const firstCard = track.querySelector('.blog-card');
+    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 0;
+    const step = (firstCard?.offsetWidth || track.clientWidth * 0.82) + gap;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const nextPosition = track.scrollLeft + direction * step;
+
+    if (direction > 0 && nextPosition >= maxScroll - 4) {
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (direction < 0 && nextPosition <= 4) {
+      track.scrollTo({ left: maxScroll, behavior: 'smooth' });
+      return;
+    }
+
+    track.scrollBy({ left: direction * step, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const timer = window.setInterval(() => {
+      if (document.hidden || sliderRef.current?.matches(':hover, :focus-within')) return;
+      move(1);
+    }, 3600);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   const handleKeys = (event) => {
     if (event.key === 'ArrowRight') move(1);
@@ -80,45 +109,57 @@ export default function BlogPosts() {
               Selected articles that turn complex ideas into clear, useful content for real audiences.
             </p>
           </div>
-          <div className="blog-posts__controls" aria-label="Blog slider controls">
-            <button type="button" onClick={() => move(-1)} aria-label="Previous blog posts">
-              <FaArrowLeft aria-hidden="true" />
-            </button>
-            <button type="button" onClick={() => move(1)} aria-label="Next blog posts">
-              <FaArrowRight aria-hidden="true" />
-            </button>
-          </div>
         </header>
 
-        <div
-          className="blog-posts__track"
-          ref={trackRef}
-          onKeyDown={handleKeys}
-          tabIndex="0"
-          aria-label="Featured blog posts"
-        >
-          {articles.map((article, index) => (
-            <article className="blog-card" key={article.href}>
-              <a href={article.href} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`}>
-                <span className="blog-card__media">
-                  <img src={article.image} alt="" loading="lazy" decoding="async" />
-                  <span className="blog-card__number">0{index + 1}</span>
-                </span>
-                <span className="blog-card__body">
-                  <span className="blog-card__meta">
-                    <span>{article.brand}</span>
-                    <span>{article.type}</span>
+        <div className="blog-posts__slider" ref={sliderRef}>
+          <button
+            className="blog-posts__arrow blog-posts__arrow--left"
+            type="button"
+            onClick={() => move(-1)}
+            aria-label="Previous blog posts"
+          >
+            <FaArrowLeft aria-hidden="true" />
+          </button>
+
+          <div
+            className="blog-posts__track"
+            ref={trackRef}
+            onKeyDown={handleKeys}
+            tabIndex="0"
+            aria-label="Featured blog posts"
+          >
+            {articles.map((article, index) => (
+              <article className="blog-card" key={article.href}>
+                <a href={article.href} target="_blank" rel="noreferrer" aria-label={`Read ${article.title}`}>
+                  <span className="blog-card__media">
+                    <img src={article.image} alt="" loading="lazy" decoding="async" />
+                    <span className="blog-card__number">0{index + 1}</span>
                   </span>
-                  <strong lang={article.language} dir={article.language === 'ar' ? 'rtl' : 'ltr'}>
-                    {article.title}
-                  </strong>
-                  <span className="blog-card__link">
-                    Read Article <FaArrowUpRightFromSquare aria-hidden="true" />
+                  <span className="blog-card__body">
+                    <span className="blog-card__meta">
+                      <span>{article.brand}</span>
+                      <span>{article.type}</span>
+                    </span>
+                    <strong lang={article.language} dir={article.language === 'ar' ? 'rtl' : 'ltr'}>
+                      {article.title}
+                    </strong>
+                    <span className="blog-card__link">
+                      Read Article <FaArrowUpRightFromSquare aria-hidden="true" />
+                    </span>
                   </span>
-                </span>
-              </a>
-            </article>
-          ))}
+                </a>
+              </article>
+            ))}
+          </div>
+
+          <button
+            className="blog-posts__arrow blog-posts__arrow--right"
+            type="button"
+            onClick={() => move(1)}
+            aria-label="Next blog posts"
+          >
+            <FaArrowRight aria-hidden="true" />
+          </button>
         </div>
 
         <p className="blog-posts__hint">Swipe or use the arrows to explore all six articles.</p>
