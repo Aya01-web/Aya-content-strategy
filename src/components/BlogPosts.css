@@ -78,13 +78,15 @@
   line-height: 1.65;
 }
 
-.blog-posts__controls {
-  display: flex;
-  gap: 0.65rem;
-  flex: 0 0 auto;
+.blog-posts__slider {
+  position: relative;
 }
 
-.blog-posts__controls button {
+.blog-posts__arrow {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  transform: translateY(-50%);
   width: 3rem;
   height: 3rem;
   display: inline-grid;
@@ -95,15 +97,25 @@
   background: rgba(255, 255, 255, 0.055);
   cursor: pointer;
   transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+  box-shadow: 0 12px 32px rgba(0, 5, 20, 0.46);
+  backdrop-filter: blur(14px);
 }
 
-.blog-posts__controls button:hover {
-  transform: translateY(-2px);
+.blog-posts__arrow--left {
+  left: -1.45rem;
+}
+
+.blog-posts__arrow--right {
+  right: -1.45rem;
+}
+
+.blog-posts__arrow:hover {
+  transform: translateY(-50%) scale(1.08);
   border-color: rgba(155, 232, 255, 0.85);
   background: rgba(93, 210, 255, 0.16);
 }
 
-.blog-posts__controls button:focus-visible,
+.blog-posts__arrow:focus-visible,
 .blog-posts__track:focus-visible,
 .blog-card a:focus-visible {
   outline: 2px solid #87e5ff;
@@ -261,13 +273,17 @@
 }
 
 @media (max-width: 640px) {
-  .blog-posts__controls {
-    padding-top: 0.15rem;
-  }
-
-  .blog-posts__controls button {
+  .blog-posts__arrow {
     width: 2.65rem;
     height: 2.65rem;
+  }
+
+  .blog-posts__arrow--left {
+    left: -0.45rem;
+  }
+
+  .blog-posts__arrow--right {
+    right: -0.45rem;
   }
 
   .blog-posts__track {
@@ -286,7 +302,7 @@
   .blog-card,
   .blog-card__media img,
   .blog-card__link svg,
-  .blog-posts__controls button {
+  .blog-posts__arrow {
     transition: none !important;
   }
 }
