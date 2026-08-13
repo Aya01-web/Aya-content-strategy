@@ -5,6 +5,7 @@ const Timeline = lazy(() => import('./components/Timeline'));
 const GlassDeck = lazy(() => import('./components/GlassDeck'));
 const ContentPlansSection = lazy(() => import('./components/ContentPlansSection'));
 const SocialMediaCarousel = lazy(() => import('./components/SocialMediaCarousel'));
+const BlogPosts = lazy(() => import('./components/BlogPosts'));
 const ConnectMeSection = lazy(() => import('./components/ConnectMeSection'));
 
 function LazyMount({ children, minHeight = 420 }) {
@@ -51,6 +52,9 @@ export default function App() {
       </LazyMount>
       <LazyMount minHeight={760}>
         <SocialMediaCarousel />
+      </LazyMount>
+      <LazyMount minHeight={760}>
+        <BlogPosts />
       </LazyMount>
       <LazyMount minHeight={780}>
         <ConnectMeSection />
